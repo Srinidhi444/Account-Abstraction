@@ -14,7 +14,7 @@ import {PackedUserOperation} from
 import {IEntryPoint} from
     "lib/account-abstraction/contracts/interfaces/IEntryPoint.sol";
 
-import {SIG_VALIDATION_FAILED, SIG_VALIDATION_SUCCEESS} from
+import {SIG_VALIDATION_FAILED, SIG_VALIDATION_SUCCESS} from
     "lib/account-abstraction/contracts/core/Helpers.sol";
 
 import {Ownable} from
@@ -193,7 +193,7 @@ contract MinimalAccount is IAccount, Ownable {
             return SIG_VALIDATION_FAILED;
         }
 
-        return SIG_VALIDATION_SUCCEESS;
+        return SIG_VALIDATION_SUCCESS;
     }
 
     /**

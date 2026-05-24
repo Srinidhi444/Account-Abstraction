@@ -23,9 +23,7 @@ contract DeployMinimal is Script {
                             EXTERNAL
     //////////////////////////////////////////////////////////////*/
 
-    function run() external {
-        deployMinimalAccount();
-    }
+    function run() external {}
 
     /*//////////////////////////////////////////////////////////////
                             PUBLIC

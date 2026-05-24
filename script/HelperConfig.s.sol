@@ -15,6 +15,7 @@ contract HelperConfig is Script {
     uint256 constant LOCALHOST_CHAIN_ID = 31337;
     NetworkConfig public activeNetworkConfig;
     address constant BURNER_WALLET=0xc196D24BacC51dDbD072C28c22aB0f85d37bcdB0;
+    address constant FOUNDRY_DEFAULT_WALLET=0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38;
     mapping(uint256 => NetworkConfig) public networkConfig; 
 
     constructor(){
@@ -49,5 +50,9 @@ contract HelperConfig is Script {
         if (activeNetworkConfig.account != address(0)) {
             return activeNetworkConfig;
         }
+        return activeNetworkConfig = NetworkConfig({
+            entryPoint: address(0),
+            account:FOUNDRY_DEFAULT_WALLET
+        });
     }
 }

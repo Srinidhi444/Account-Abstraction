@@ -39,7 +39,8 @@ contract SendPackedUserOp is Script {
 
     function generatedSignedUserOperation(
         bytes memory callData,
-        HelperConfig.NetworkConfig memory networkConfig
+        HelperConfig.NetworkConfig memory networkConfig,
+        address account
     )
         public
         returns (PackedUserOperation memory)
@@ -48,13 +49,13 @@ contract SendPackedUserOp is Script {
                     1. GENERATE UNSIGNED USER OP
         //////////////////////////////////////////////////////////////*/
 
-        uint256 nonce =
-            vm.getNonce(networkConfig.account);
+
+                  uint256 nonce = IEntryPoint(networkConfig.entryPoint).getNonce(account, 0);
 
         PackedUserOperation memory unsignedUserOp =
             _generateUnsignedUserOperation(
                 callData,
-                networkConfig.account,
+                account,
                 nonce
             );
 
@@ -95,45 +96,42 @@ contract SendPackedUserOp is Script {
     //////////////////////////////////////////////////////////////*/
 
     function _generateUnsignedUserOperation(
-        bytes memory callData,
-        address sender,
-        uint256 nonce
-    )
-        internal
-        pure
-        returns (PackedUserOperation memory)
-    {
-        uint128 verificationGasLimit = 16777216;
+    bytes memory callData,
+    address sender,
+    uint256 nonce
+)
+    internal
+    pure
+    returns (PackedUserOperation memory)
+{
+    uint128 verificationGasLimit = 300000;
 
-        uint128 callGasLimit =
-            verificationGasLimit;
+    uint128 callGasLimit = 300000;
 
-        uint256 maxPriorityFeePerGas = 256;
+    uint256 maxPriorityFeePerGas = 1 gwei;
 
-        uint256 maxFeePerGas =
-            maxPriorityFeePerGas;
+    uint256 maxFeePerGas = 2 gwei;
 
-        return PackedUserOperation({
-            sender: sender,
-            nonce: nonce,
-            initCode: hex"",
-            callData: callData,
+    return PackedUserOperation({
+        sender: sender,
+        nonce: nonce,
+        initCode: hex"",
+        callData: callData,
 
-            accountGasLimits: bytes32(
-                (uint256(verificationGasLimit) << 128)
-                    | uint256(callGasLimit)
-            ),
+        accountGasLimits: bytes32(
+            (uint256(verificationGasLimit) << 128)
+                | uint256(callGasLimit)
+        ),
 
-            preVerificationGas:
-                verificationGasLimit,
+        preVerificationGas: 50000,
 
-            gasFees: bytes32(
-                (uint256(maxPriorityFeePerGas) << 128)
-                    | uint256(maxFeePerGas)
-            ),
+        gasFees: bytes32(
+            (uint256(maxPriorityFeePerGas) << 128)
+                | uint256(maxFeePerGas)
+        ),
 
-            paymasterAndData: hex"",
-            signature: hex""
-        });
-    }
+        paymasterAndData: hex"",
+        signature: hex""
+    });
+}
 }

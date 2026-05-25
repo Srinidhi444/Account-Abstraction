@@ -73,15 +73,15 @@ contract MinimalAccount is IAccount, Ownable {
         _;
     }
 
-    /**
-     * @notice Allows only wallet owner to call
-     */
-    modifier requireFromOwner() {
-        if (msg.sender != owner()) {
-            revert MinimalAccount__NotFromOwner();
-        }
-        _;
+   modifier requireFromEntryPointOrOwner() {
+    if (
+        msg.sender != address(i_entryPoint)
+            && msg.sender != owner()
+    ) {
+        revert MinimalAccount__NotFromOwner();
     }
+    _;
+}
 
     /*//////////////////////////////////////////////////////////////
                             CONSTRUCTOR
@@ -120,7 +120,7 @@ contract MinimalAccount is IAccount, Ownable {
         bytes calldata data
     )
         external
-        requireFromOwner
+        requireFromEntryPointOrOwner
     {
         (bool success, bytes memory result) =
             target.call{value: value}(data);
@@ -208,8 +208,7 @@ contract MinimalAccount is IAccount, Ownable {
         if (missingAccountFunds > 0) {
             (bool success,) =
                 payable(msg.sender).call{
-                    value: missingAccountFunds,
-                    gas: type(uint256).max
+                    value: missingAccountFunds
                 }("");
 
             if (!success) {
